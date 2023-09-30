@@ -28,6 +28,7 @@ export const register = async (req, res) => {
     });
   } catch (error) {
     if (error.code === 11000) {
+      console.log(error);
       return res.status(400).json({
         errors: [
           {

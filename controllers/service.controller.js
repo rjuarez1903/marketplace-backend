@@ -2,10 +2,16 @@ import { Service } from "../models/Service.js";
 import { validateAllowedUpdates } from "../utils/validateAllowedUpdates.js";
 import { findServiceAndCheckOwnership } from "../utils/findServiceAndCheckOwnership.js";
 import { handleErrorResponse } from "../utils/handleErrorResponse.js";
+import  { validateCategory } from "../utils/validateCategory.js";
 
 export const getAllServices = async (req, res) => {
   try {
-    const services = await Service.find({}).lean();
+    const category = req.query.category || "all"
+    if (category !== "all" && !validateCategory(category)) {
+      return res.status(400).json({ message: "Invalid category." });
+    }
+    const query = category === "all" ? {} : { category };
+    const services = await Service.find(query).lean();
     return res.json({ services });
   } catch (error) {
     return handleErrorResponse(res, error);

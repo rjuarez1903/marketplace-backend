@@ -62,3 +62,27 @@ export const createComment = async (req, res) => {
     return handleErrorResponse(res, error);
   }
 };
+
+export const updateComment = async (req, res) => {
+  try {
+    const comment = await Comment.findById(req.params.commentId);
+    if (!comment) {
+      return res.status(404).json({
+        message: "Comment not found",
+      });
+    }
+    const service = await Service.findById(comment.serviceId);
+    const { userId } = service;
+    if (userId.toString() !== req.userId) {
+      return res.status(403).json({
+        message: "Unauthorized to update this comment",
+      });
+    }
+    const { isBlocked } = req.body;
+    comment.isBlocked = isBlocked;
+    await comment.save();
+    return res.json({ comment });
+  } catch (error) {
+    return handleErrorResponse(res, error);
+  }
+};
