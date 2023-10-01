@@ -38,6 +38,12 @@ const serviceSchema = new mongoose.Schema({
     enum: ["individual", "group"],
     required: true,
   },
+  duration: {
+    type: Number,
+    required: true,
+    min: [0.5, "The minimum duration must be at least 0.5 hours."],
+    max: [4, "The maximum duration must be 4 hours."],
+  },
   totalRatings: {
     type: Number,
     default: 0,

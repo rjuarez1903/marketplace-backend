@@ -2,11 +2,11 @@ import { Service } from "../models/Service.js";
 import { validateAllowedUpdates } from "../utils/validateAllowedUpdates.js";
 import { findServiceAndCheckOwnership } from "../utils/findServiceAndCheckOwnership.js";
 import { handleErrorResponse } from "../utils/handleErrorResponse.js";
-import  { validateCategory } from "../utils/validateCategory.js";
+import { validateCategory } from "../utils/validateCategory.js";
 
 export const getAllServices = async (req, res) => {
   try {
-    const category = req.query.category || "all"
+    const category = req.query.category || "all";
     if (category !== "all" && !validateCategory(category)) {
       return res.status(400).json({ message: "Invalid category." });
     }
@@ -68,6 +68,7 @@ export const updateService = async (req, res) => {
       "frequency",
       "cost",
       "type",
+      "duration",
     ];
     const service = await findServiceAndCheckOwnership(
       req.params.id,
@@ -75,7 +76,7 @@ export const updateService = async (req, res) => {
     );
     const updates = Object.keys(req.body);
     if (!validateAllowedUpdates(allowedUpdates, updates)) {
-      return res.status(400).json({ message: "Invalid updates" });
+      return res.status(400).json({ message: "Invalid update" });
     }
     allowedUpdates.forEach((update) => {
       service[update] = req.body[update];

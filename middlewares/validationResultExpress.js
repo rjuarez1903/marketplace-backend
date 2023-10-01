@@ -68,6 +68,8 @@ export const createServiceBodyValidator = [
   body("cost", "Cost must be at least 0.99").isFloat({ min: 0.99 }),
   body("type", "Type is required").trim().notEmpty(),
   body("type", "Invalid type").isIn(["individual", "group"]),
+  body("duration", "Duration is required").trim().notEmpty(),
+  body("duration", "Invalid duration").isFloat({ min: 0.5, max: 4 }).toFloat(),
   validationResultExpress,
 ];
 
