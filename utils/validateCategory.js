@@ -1,5 +1,5 @@
 export const validateCategory = (category) => {
-  return ["Front end", "Back end", "Dev ops", "Data science"].includes(
+  return ["programacion", "idiomas", "musica", "matematica"].includes(
     category
   );
 };

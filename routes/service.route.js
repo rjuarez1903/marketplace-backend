@@ -19,8 +19,8 @@ const router = Router();
 // PATCH    /api/v1/services/:id      update service
 // DELETE   /api/v1/services/:id      delete service
 
-router.get("/", getAllServices);
 router.get("/user", requireToken, getServicesByUser);
+router.get("/", getAllServices);
 router.get("/:id", getServiceById);
 router.post("/", requireToken, createServiceBodyValidator, createService);
 router.patch("/:id", requireToken, createServiceBodyValidator, updateService);

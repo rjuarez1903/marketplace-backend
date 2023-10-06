@@ -13,6 +13,7 @@ const app = express();
 
 const whitelist = [process.env.ORIGIN1];
 
+app.use(cookieParser());
 app.use(
   cors({
     origin: function (origin, callback) {
@@ -21,10 +22,10 @@ app.use(
       }
       return callback("Not allowed by CORS");
     },
+    credentials: true, 
   })
 );
 app.use(express.json());
-app.use(cookieParser());
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/services", serviceRouter);

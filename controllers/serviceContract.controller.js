@@ -19,6 +19,23 @@ export const getContractsByServiceId = async (req, res) => {
   }
 };
 
+export const getContractsByUser = async (req, res) => {
+  try {
+    const contracts = await ServiceContract.find({ userId: req.userId }).lean();
+    const contractsWithServiceInfo = await Promise.all(
+      contracts.map(async (contract) => {
+        const service = await Service.findById(contract.serviceId).lean();
+        contract.serviceName = service.name; 
+        return contract;
+      })
+    );
+    return res.json({ contracts: contractsWithServiceInfo });
+  } catch (error) {
+    return handleErrorResponse(res, error);
+  }
+};
+
+
 export const createContract = async (req, res) => {
   try {
     const service = await Service.findById(req.params.serviceId).lean();
@@ -27,8 +44,10 @@ export const createContract = async (req, res) => {
         message: "Service not found",
       });
     }
+    const { userId } = service;
     const contract = await ServiceContract.create({
       ...req.body,
+      userId: userId.toString(),
       serviceId: req.params.serviceId,
     });
     return res

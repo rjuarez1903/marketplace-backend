@@ -1,6 +1,11 @@
 import mongoose from "mongoose";
 
 const ServiceContractSchema = new mongoose.Schema({
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "user",
+    required: true,
+  },
   serviceId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "service",

@@ -20,7 +20,7 @@ const serviceSchema = new mongoose.Schema({
   },
   category: {
     type: String,
-    enum: ["Front end", "Back end", "Dev ops", "Data science"],
+    enum: ["programacion", "idiomas", "musica", "matematica"],
     required: true,
   },
   frequency: {
@@ -43,6 +43,10 @@ const serviceSchema = new mongoose.Schema({
     required: true,
     min: [0.5, "The minimum duration must be at least 0.5 hours."],
     max: [4, "The maximum duration must be 4 hours."],
+  },
+  isPublished: {
+    type: Boolean,
+    default: true,
   },
   totalRatings: {
     type: Number,

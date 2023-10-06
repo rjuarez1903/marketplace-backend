@@ -14,7 +14,8 @@ export const getCommentsByServiceId = async (req, res) => {
     let comments = await Comment.find({
       serviceId: req.params.serviceId,
     }).lean();
-    comments = comments.filter((comment) => comment.isBlocked === false);
+    // Devuelve exclusivamente los comentarios que no estén bloqueados
+    // comments = comments.filter((comment) => comment.isBlocked === false);
     return res.json({ comments });
   } catch (error) {
     return handleErrorResponse(res, error);
