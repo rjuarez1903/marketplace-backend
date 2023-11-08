@@ -1,10 +1,9 @@
-import { User } from "../models/User.js";
-import { generateRefreshToken, generateToken } from "../utils/tokenManager.js";
+import { createUserService, authenticateUserService, findUserByEmailService, comparePasswordService, clearRefreshTokenService } from '../services/auth.service.js';
 
 export const register = async (req, res) => {
   const { firstName, lastName, email, password, phoneNumber } = req.body;
   try {
-    const user = new User({
+    const leanUser = await createUserService({
       firstName,
       lastName,
       email,
@@ -13,14 +12,9 @@ export const register = async (req, res) => {
       degree: "",
       experience: "",
     });
-    await user.save();
-    console.log(user);
-    const leanUser = user.toObject();
-    const { token, expiresIn } = generateToken(user._id);
-    generateRefreshToken(user._id, res);
-    console.log("OK");
+    const { token, expiresIn } = await authenticateUserService(leanUser._id, res);
     return res.status(201).json({
-      leanUser,
+      user: leanUser,
       jwt: {
         token,
         expiresIn,
@@ -28,7 +22,6 @@ export const register = async (req, res) => {
     });
   } catch (error) {
     if (error.code === 11000) {
-      console.log(error);
       return res.status(400).json({
         errors: [
           {
@@ -45,11 +38,10 @@ export const register = async (req, res) => {
 };
 
 export const login = async (req, res) => {
+  const { email, password } = req.body;
   try {
-    const { email, password } = req.body;
-    const user = await User.findOne({ email });
-
-    if (!user || !(await user.comparePassword(password))) {
+    const user = await findUserByEmailService(email);
+    if (!user || !(await comparePasswordService(user, password))) {
       return res.status(403).json({
         errors: [
           {
@@ -58,10 +50,7 @@ export const login = async (req, res) => {
         ],
       });
     }
-
-    const { token, expiresIn } = generateToken(user._id);
-    generateRefreshToken(user._id, res);
-
+    const { token, expiresIn } = await authenticateUserService(user._id, res);
     return res.json({
       user: {
         id: user._id,
@@ -78,7 +67,6 @@ export const login = async (req, res) => {
       },
     });
   } catch (error) {
-    console.log(error);
     return res.status(500).json({
       message: "Server error",
     });
@@ -95,7 +83,6 @@ export const refreshToken = async (req, res) => {
       },
     });
   } catch (error) {
-    console.log(error);
     return res.status(500).json({
       message: "Server error",
     });
@@ -104,12 +91,11 @@ export const refreshToken = async (req, res) => {
 
 export const logout = async (req, res) => {
   try {
-    res.clearCookie("refreshToken");
+    clearRefreshTokenService(res);
     return res.json({
       message: "Logged out",
     });
   } catch (error) {
-    console.log(error);
     return res.status(500).json({
       message: "Server error",
     });
