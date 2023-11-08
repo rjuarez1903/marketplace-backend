@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
-import { Comment } from "./Comment";
-import { ServiceContract } from "./ServiceContract";
+import { Comment } from "./Comment.js";
+import { ServiceContract } from "./ServiceContract.js";
 
 const serviceSchema = new mongoose.Schema({
   userId: {

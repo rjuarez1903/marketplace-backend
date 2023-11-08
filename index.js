@@ -8,6 +8,7 @@ import userRouter from "./routes/user.route.js";
 import serviceRouter from "./routes/service.route.js";
 import serviceContractService from "./routes/serviceContract.route.js";
 import commentRouter from "./routes/comment.route.js";
+import imageRouter from "./routes/image.route.js"
 
 const app = express();
 
@@ -31,6 +32,7 @@ app.use("/api/v1/users", userRouter);
 app.use("/api/v1/services", serviceRouter);
 app.use("/api/v1/serviceContracts", serviceContractService);
 app.use("/api/v1/comments", commentRouter);
+app.use("/api/v1/uploads", imageRouter);
 
 const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => {
