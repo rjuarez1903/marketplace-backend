@@ -1,4 +1,5 @@
 import { createUserService, authenticateUserService, findUserByEmailService, comparePasswordService, clearRefreshTokenService } from '../services/auth.service.js';
+import { generateToken } from '../utils/tokenManager.js';
 
 export const register = async (req, res) => {
   const { firstName, lastName, email, password, phoneNumber } = req.body;
