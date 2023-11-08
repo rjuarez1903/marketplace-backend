@@ -1,17 +1,16 @@
-import { Service } from "../models/Service.js";
-import { validateAllowedUpdates } from "../utils/validateAllowedUpdates.js";
-import { findServiceAndCheckOwnership } from "../utils/findServiceAndCheckOwnership.js";
+// service.controller.js
+
+import * as ServiceService from "../services/service.service.js";
 import { handleErrorResponse } from "../utils/handleErrorResponse.js";
-import { validateCategory } from "../utils/validateCategory.js";
+import { validateAllowedUpdates } from "../utils/validateAllowedUpdates.js";
 
 export const getAllServices = async (req, res) => {
   try {
     const category = req.query.category || "all";
-    if (category !== "all" && !validateCategory(category)) {
+    if (!ServiceService.validateCategory(category)) {
       return res.status(400).json({ message: "Invalid category." });
     }
-    const query = category === "all" ? {} : { category };
-    const services = await Service.find(query).lean();
+    const services = await ServiceService.findAllServices(category);
     return res.json({ services });
   } catch (error) {
     return handleErrorResponse(res, error);
@@ -20,7 +19,7 @@ export const getAllServices = async (req, res) => {
 
 export const getServicesByUser = async (req, res) => {
   try {
-    const services = await Service.find({ userId: req.userId }).lean();
+    const services = await ServiceService.findServicesByUserId(req.userId);
     return res.json({ services });
   } catch (error) {
     return handleErrorResponse(res, error);
@@ -29,7 +28,7 @@ export const getServicesByUser = async (req, res) => {
 
 export const createService = async (req, res) => {
   try {
-    const service = await Service.create({
+    const service = await ServiceService.createNewService({
       ...req.body,
       userId: req.userId,
       averageRating: 0,
@@ -47,11 +46,9 @@ export const createService = async (req, res) => {
 
 export const getServiceById = async (req, res) => {
   try {
-    const service = await Service.findById(req.params.id).lean();
+    const service = await ServiceService.findServiceById(req.params.id);
     if (!service) {
-      return res.status(404).json({
-        message: "Service not found",
-      });
+      return res.status(404).json({ message: "Service not found" });
     }
     return res.json({ service });
   } catch (error) {
@@ -60,28 +57,25 @@ export const getServiceById = async (req, res) => {
 };
 
 export const updateService = async (req, res) => {
+  const allowedUpdates = [
+    "name",
+    "description",
+    "category",
+    "frequency",
+    "cost",
+    "type",
+    "duration",
+  ];
+  const updates = Object.keys(req.body);
+  if (!validateAllowedUpdates(allowedUpdates, updates)) {
+    return res.status(400).json({ message: "Invalid update" });
+  }
   try {
-    const allowedUpdates = [
-      "name",
-      "description",
-      "category",
-      "frequency",
-      "cost",
-      "type",
-      "duration",
-    ];
-    const service = await findServiceAndCheckOwnership(
+    const service = await ServiceService.updateExistingService(
       req.params.id,
-      req.userId
+      req.userId,
+      req.body
     );
-    const updates = Object.keys(req.body);
-    if (!validateAllowedUpdates(allowedUpdates, updates)) {
-      return res.status(400).json({ message: "Invalid update" });
-    }
-    allowedUpdates.forEach((update) => {
-      service[update] = req.body[update];
-    });
-    await service.save();
     return res.json({ service });
   } catch (error) {
     return handleErrorResponse(res, error);
@@ -90,11 +84,7 @@ export const updateService = async (req, res) => {
 
 export const deleteService = async (req, res) => {
   try {
-    const service = await findServiceAndCheckOwnership(
-      req.params.id,
-      req.userId
-    );
-    await service.deleteOne();
+    await ServiceService.removeService(req.params.id, req.userId);
     return res.status(204).send();
   } catch (error) {
     return handleErrorResponse(res, error);
