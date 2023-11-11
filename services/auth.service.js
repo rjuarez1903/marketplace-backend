@@ -1,5 +1,5 @@
-import { User } from '../models/User.js';
-import { generateToken, generateRefreshToken } from '../utils/tokenManager.js';
+import { User } from "../models/User.js";
+import { generateToken, generateRefreshToken } from "../utils/tokenManager.js";
 
 export const createUserService = async (userData) => {
   const user = new User(userData);

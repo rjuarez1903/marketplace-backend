@@ -1,4 +1,5 @@
 import { findUserById, updateUserById, getPublicProfile } from '../services//user.service.js';
+import { upload } from '../services/cloudinary.js';
 
 export const getUser = async (req, res) => {
   try {
@@ -32,6 +33,18 @@ export const updateUser = async (req, res) => {
     const { degree, experience } = req.body;
     const leanUser = await updateUserById(req.userId, { degree, experience });
     return res.json({ leanUser });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Server error" });
+  }
+};
+
+export const updateUserProfileImage = async (req, res) => {
+  try {
+    const { userId } = req;
+    const imageUrl = await upload(req.file.buffer);
+    const updatedUser = await updateUserById(userId, { profileImgUrl: imageUrl });
+    return res.json({ user: updatedUser });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: "Server error" });

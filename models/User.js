@@ -28,6 +28,10 @@ const userSchema = new mongoose.Schema({
     maxLength: [255, "Experience cannot be more than 50 characters"],
     trim: true,
   },
+  profileImgUrl: {
+    type: String,
+    default: "",
+  },
 });
 
 userSchema.pre("save", async function (next) {

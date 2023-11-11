@@ -1,5 +1,12 @@
-import { createUserService, authenticateUserService, findUserByEmailService, comparePasswordService, clearRefreshTokenService } from '../services/auth.service.js';
-import { generateToken } from '../utils/tokenManager.js';
+import {
+  createUserService,
+  authenticateUserService,
+  findUserByEmailService,
+  comparePasswordService,
+  clearRefreshTokenService,
+} from "../services/auth.service.js";
+import { generateToken } from "../utils/tokenManager.js";
+import { sendPasswordResetEmail } from "../services/sendGrid.js";
 
 export const register = async (req, res) => {
   const { firstName, lastName, email, password, phoneNumber } = req.body;
@@ -13,7 +20,10 @@ export const register = async (req, res) => {
       degree: "",
       experience: "",
     });
-    const { token, expiresIn } = await authenticateUserService(leanUser._id, res);
+    const { token, expiresIn } = await authenticateUserService(
+      leanUser._id,
+      res
+    );
     return res.status(201).json({
       user: leanUser,
       jwt: {
@@ -102,3 +112,43 @@ export const logout = async (req, res) => {
     });
   }
 };
+
+export const requestPasswordReset = async (req, res) => {
+  const { email } = req.body;
+  console.log(email)
+  try {
+    const user = await findUserByEmailService(email);
+    if (user) {
+      await sendPasswordResetEmail(user);
+    }
+    return res.json({
+      message: "If an account with this email exists, a password reset link has been sent.",
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: "Server error",
+    });
+  }
+};
+
+export const resetPassword = async (req, res) => {
+  const { token, password } = req.body;
+  try {
+    const { userId } = generateToken(token);
+    const user = await findUserById(userId);
+    if (!user) {
+      return res.status(404).json({
+        message: "User not found",
+      });
+    }
+    user.password = password;
+    await user.save();
+    return res.json({
+      message: "Password reset successfully",
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: "Server error",
+    });
+  }
+}

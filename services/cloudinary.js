@@ -6,7 +6,7 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-const upload = async (imageBuffer) => {
+export const upload = async (imageBuffer) => {
   const uploadResult = new Promise((resolve, reject) => {
     cloudinary.uploader
       .upload_stream((error, result) => {
@@ -27,5 +27,3 @@ const upload = async (imageBuffer) => {
 
   return uploadResult;
 };
-
-export default upload;
