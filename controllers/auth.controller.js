@@ -1,12 +1,14 @@
 import {
   createUserService,
   authenticateUserService,
+  findUserByIdService,
   findUserByEmailService,
   comparePasswordService,
   clearRefreshTokenService,
 } from "../services/auth.service.js";
 import { generateToken } from "../utils/tokenManager.js";
 import { sendPasswordResetEmail } from "../services/sendGrid.js";
+import jwt from "jsonwebtoken";
 
 export const register = async (req, res) => {
   const { firstName, lastName, email, password, phoneNumber } = req.body;
@@ -115,14 +117,15 @@ export const logout = async (req, res) => {
 
 export const requestPasswordReset = async (req, res) => {
   const { email } = req.body;
-  console.log(email)
+  console.log(email);
   try {
     const user = await findUserByEmailService(email);
     if (user) {
       await sendPasswordResetEmail(user);
     }
     return res.json({
-      message: "If an account with this email exists, a password reset link has been sent.",
+      message:
+        "If an account with this email exists, a password reset link has been sent.",
     });
   } catch (error) {
     return res.status(500).json({
@@ -134,21 +137,19 @@ export const requestPasswordReset = async (req, res) => {
 export const resetPassword = async (req, res) => {
   const { token, password } = req.body;
   try {
-    const { userId } = generateToken(token);
-    const user = await findUserById(userId);
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const userId = decoded.userId;
+    const user = await findUserByIdService(userId);
     if (!user) {
-      return res.status(404).json({
-        message: "User not found",
-      });
+      return res.status(404).json({ message: "User not found" });
     }
     user.password = password;
     await user.save();
-    return res.json({
-      message: "Password reset successfully",
-    });
+    return res.json({ message: "Password reset successfully" });
   } catch (error) {
-    return res.status(500).json({
-      message: "Server error",
-    });
+    if (error instanceof jwt.TokenExpiredError) {
+      return res.status(403).json({ message: "Token expired" });
+    }
+    return res.status(500).json({ message: "Server error" });
   }
-}
+};

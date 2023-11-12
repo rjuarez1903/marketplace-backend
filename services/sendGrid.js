@@ -31,7 +31,7 @@ export const sendPasswordResetEmail = async (user) => {
   );
   const resetPasswordUrl = `http://localhost:5173/reset-password?token=${token}`;
   const subject = "Restablecimiento de Contraseña";
-  const text = `Hola ${firstName}, por favor haz clic en el enlace para restablecer tu contraseña: ${resetPasswordUrl}`;
-  const html = `<p>Hola ${firstName}, por favor haz clic en el siguiente enlace para restablecer tu contraseña: <a href="${resetPasswordUrl}">${resetPasswordUrl}</a></p>`;
+  const text = `Hola ${firstName}, por favor hacé click en el enlace para restablecer tu contraseña: ${resetPasswordUrl}`;
+  const html = `<p>Hola ${firstName}, por favor hacé click en el siguiente enlace para restablecer tu contraseña: <a href="${resetPasswordUrl}">${resetPasswordUrl}</a></p>`;
   await sendMail(email, subject, text, html);
 }

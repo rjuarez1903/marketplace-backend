@@ -13,6 +13,10 @@ export const authenticateUserService = async (userId, res) => {
   return { token, expiresIn };
 };
 
+export const findUserByIdService = async (userId) => {
+  return await User.findById(userId);
+}
+
 export const findUserByEmailService = async (email) => {
   return await User.findOne({ email });
 };
