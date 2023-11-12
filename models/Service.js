@@ -1,4 +1,6 @@
 import mongoose from "mongoose";
+import { Comment } from "./Comment.js";
+import { ServiceContract } from "./ServiceContract.js";
 
 const serviceSchema = new mongoose.Schema({
   userId: {
@@ -60,6 +62,13 @@ const serviceSchema = new mongoose.Schema({
     type: Number,
     default: 0,
   },
+});
+
+serviceSchema.pre('deleteOne', { document: true, query: false }, async function(next) {
+  const serviceId = this._id;
+  await Comment.deleteMany({ serviceId });
+  await ServiceContract.deleteMany({ serviceId });
+  next();
 });
 
 export const Service = mongoose.model("service", serviceSchema);

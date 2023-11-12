@@ -1,10 +1,19 @@
-import { User } from "../models/User.js";
-import { generateRefreshToken, generateToken } from "../utils/tokenManager.js";
+import {
+  createUserService,
+  authenticateUserService,
+  findUserByIdService,
+  findUserByEmailService,
+  comparePasswordService,
+  clearRefreshTokenService,
+} from "../services/auth.service.js";
+import { generateToken } from "../utils/tokenManager.js";
+import { sendPasswordResetEmail } from "../services/sendGrid.js";
+import jwt from "jsonwebtoken";
 
 export const register = async (req, res) => {
   const { firstName, lastName, email, password, phoneNumber } = req.body;
   try {
-    const user = new User({
+    const leanUser = await createUserService({
       firstName,
       lastName,
       email,
@@ -13,14 +22,12 @@ export const register = async (req, res) => {
       degree: "",
       experience: "",
     });
-    await user.save();
-    console.log(user);
-    const leanUser = user.toObject();
-    const { token, expiresIn } = generateToken(user._id);
-    generateRefreshToken(user._id, res);
-    console.log("OK");
+    const { token, expiresIn } = await authenticateUserService(
+      leanUser._id,
+      res
+    );
     return res.status(201).json({
-      leanUser,
+      user: leanUser,
       jwt: {
         token,
         expiresIn,
@@ -28,7 +35,6 @@ export const register = async (req, res) => {
     });
   } catch (error) {
     if (error.code === 11000) {
-      console.log(error);
       return res.status(400).json({
         errors: [
           {
@@ -45,11 +51,10 @@ export const register = async (req, res) => {
 };
 
 export const login = async (req, res) => {
+  const { email, password } = req.body;
   try {
-    const { email, password } = req.body;
-    const user = await User.findOne({ email });
-
-    if (!user || !(await user.comparePassword(password))) {
+    const user = await findUserByEmailService(email);
+    if (!user || !(await comparePasswordService(user, password))) {
       return res.status(403).json({
         errors: [
           {
@@ -58,10 +63,7 @@ export const login = async (req, res) => {
         ],
       });
     }
-
-    const { token, expiresIn } = generateToken(user._id);
-    generateRefreshToken(user._id, res);
-
+    const { token, expiresIn } = await authenticateUserService(user._id, res);
     return res.json({
       user: {
         id: user._id,
@@ -78,7 +80,6 @@ export const login = async (req, res) => {
       },
     });
   } catch (error) {
-    console.log(error);
     return res.status(500).json({
       message: "Server error",
     });
@@ -95,7 +96,6 @@ export const refreshToken = async (req, res) => {
       },
     });
   } catch (error) {
-    console.log(error);
     return res.status(500).json({
       message: "Server error",
     });
@@ -104,14 +104,52 @@ export const refreshToken = async (req, res) => {
 
 export const logout = async (req, res) => {
   try {
-    res.clearCookie("refreshToken");
+    clearRefreshTokenService(res);
     return res.json({
       message: "Logged out",
     });
   } catch (error) {
-    console.log(error);
     return res.status(500).json({
       message: "Server error",
     });
+  }
+};
+
+export const requestPasswordReset = async (req, res) => {
+  const { email } = req.body;
+  console.log(email);
+  try {
+    const user = await findUserByEmailService(email);
+    if (user) {
+      await sendPasswordResetEmail(user);
+    }
+    return res.json({
+      message:
+        "If an account with this email exists, a password reset link has been sent.",
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: "Server error",
+    });
+  }
+};
+
+export const resetPassword = async (req, res) => {
+  const { token, password } = req.body;
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const userId = decoded.userId;
+    const user = await findUserByIdService(userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    user.password = password;
+    await user.save();
+    return res.json({ message: "Password reset successfully" });
+  } catch (error) {
+    if (error instanceof jwt.TokenExpiredError) {
+      return res.status(403).json({ message: "Token expired" });
+    }
+    return res.status(500).json({ message: "Server error" });
   }
 };
