@@ -73,6 +73,7 @@ export const login = async (req, res) => {
         phoneNumber: user.phoneNumber,
         title: user.degree,
         experience: user.experience,
+        profileImgUrl: user.profileImgUrl,
       },
       jwt: {
         token,
