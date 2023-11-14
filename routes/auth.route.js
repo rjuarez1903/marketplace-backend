@@ -5,6 +5,7 @@ import {
   refreshToken,
   logout,
   requestPasswordReset,
+  validateToken,
   resetPassword,
 } from "../controllers/auth.controller.js";
 import {
@@ -19,6 +20,7 @@ router.post("/register", registerBodyValidator, register);
 router.post("/login", loginBodyValidator, login);
 router.post("/requestPasswordReset", requestPasswordReset);
 router.post("/resetPassword", resetPassword);
+router.post("/validateToken", validateToken);
 router.get("/refresh", requireRefreshToken, refreshToken);
 router.get("/logout", logout);
 

@@ -8,7 +8,7 @@ export const getCommentsByServiceId = async (req, res) => {
       return res.status(404).json({ message: "Service not found" });
     }
     let comments = await CommentService.findCommentsByServiceId(req.params.serviceId);
-    comments = comments.filter((comment) => !comment.isBlocked);
+    // comments = comments.filter((comment) => !comment.isBlocked);
     return res.json({ comments });
   } catch (error) {
     return handleErrorResponse(res, error);

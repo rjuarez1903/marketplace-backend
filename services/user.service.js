@@ -12,6 +12,6 @@ export const updateUserById = async (id, updateData) => {
 };
 
 export const getPublicProfile = (user) => {
-  const { firstName, lastName, degree, experience } = user;
-  return { firstName, lastName, degree, experience };
+  const { firstName, lastName, degree, experience, profileImgUrl } = user;
+  return { firstName, lastName, degree, experience, profileImgUrl };
 };

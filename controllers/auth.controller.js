@@ -6,7 +6,7 @@ import {
   comparePasswordService,
   clearRefreshTokenService,
 } from "../services/auth.service.js";
-import { generateToken } from "../utils/tokenManager.js";
+import { generateToken, verifyToken } from "../utils/tokenManager.js";
 import { sendPasswordResetEmail } from "../services/sendGrid.js";
 import jwt from "jsonwebtoken";
 
@@ -73,6 +73,7 @@ export const login = async (req, res) => {
         phoneNumber: user.phoneNumber,
         title: user.degree,
         experience: user.experience,
+        profileImgUrl: user.profileImgUrl,
       },
       jwt: {
         token,
@@ -153,3 +154,11 @@ export const resetPassword = async (req, res) => {
     return res.status(500).json({ message: "Server error" });
   }
 };
+
+export const validateToken = async (req, res) => {
+  if (verifyToken(req.body.token).valid) {
+    return res.json({ valid: true });
+  } else {
+    return res.status(401).json({ valid: false });
+  }
+}
