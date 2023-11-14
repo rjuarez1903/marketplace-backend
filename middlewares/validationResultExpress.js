@@ -98,10 +98,6 @@ export const updateServiceContractBodyValidator = [
 ];
 
 export const createCommentBodyValidator = [
-  body("content", "Content is required").trim().notEmpty(),
-  body("content", "Content must be at least 5 characters").isLength({
-    min: 5,
-  }),
   body("content", "Content cannot be more than 255 characters").isLength({
     max: 255,
   }),
