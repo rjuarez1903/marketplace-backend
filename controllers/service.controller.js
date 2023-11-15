@@ -65,6 +65,7 @@ export const updateService = async (req, res) => {
     "cost",
     "type",
     "duration",
+    "isPublished"
   ];
   const updates = Object.keys(req.body);
   if (!validateAllowedUpdates(allowedUpdates, updates)) {
