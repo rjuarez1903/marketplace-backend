@@ -82,9 +82,9 @@ export const sendPasswordResetEmail = async (user) => {
         <div class="email-body">
           <div class="email-title">EduHub Team</div>
           <p>Hola ${firstName},</p>
-          <p>Por favor haz click en el siguiente enlace para restablecer tu contraseña:</p>
+          <p>Por favor hacé click en el siguiente enlace para restablecer tu contraseña:</p>
           <a href="${resetPasswordUrl}" class="email-link">Restablecer Contraseña</a>
-          <p>Si no solicitaste un restablecimiento de contraseña, ignora este correo electrónico o ponte en contacto con nosotros si tienes alguna pregunta.</p>
+          <p>Si no solicitaste un restablecimiento de contraseña, ignorá este correo electrónico o ponete en contacto con nosotros si tenés alguna pregunta.</p>
         </div>
       </div>
     </body>
