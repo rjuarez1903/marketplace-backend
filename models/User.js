@@ -6,7 +6,7 @@ const userSchema = new mongoose.Schema({
   lastName: String,
   email: {
     type: String,
-    unique: [true, "Email already exists"],
+    unique: [true, "Email ya registrado"],
     required: true,
     trim: true,
   },
@@ -20,13 +20,17 @@ const userSchema = new mongoose.Schema({
   },
   degree: {
     type: String,
-    maxLength: [50, "Title cannot be more than 50 characters"],
+    maxLength: [50, "El título no puede exceder los 50 caracteres"],
     trim: true,
   },
   experience: {
     type: String,
-    maxLength: [255, "Experience cannot be more than 50 characters"],
+    maxLength: [255, "La experiencia no puede exceder los 255 caracteres"],
     trim: true,
+  },
+  profileImgUrl: {
+    type: String,
+    default: "",
   },
 });
 
@@ -43,7 +47,7 @@ userSchema.pre("save", async function (next) {
     next();
   } catch (error) {
     console.log(error);
-    throw new Error("Error hashing password");
+    throw new Error("Error al encriptar la contraseña");
   }
 });
 

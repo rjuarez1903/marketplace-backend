@@ -20,7 +20,7 @@ const ServiceContractSchema = new mongoose.Schema({
     type: String,
     required: true,
     trim: true,
-    maxLength: [255, "Message cannot be more than 255 characters"],
+    maxLength: [255, "El mensaje no puede exceder los 255 caracteres"],
   },
   phoneNumber: {
     type: String,

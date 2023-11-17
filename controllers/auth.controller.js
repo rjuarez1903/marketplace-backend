@@ -1,10 +1,18 @@
-import { User } from "../models/User.js";
-import { generateRefreshToken, generateToken } from "../utils/tokenManager.js";
+import {
+  createUserService,
+  authenticateUserService,
+  findUserByIdService,
+  findUserByEmailService,
+  comparePasswordService,
+} from "../services/auth.service.js";
+import { verifyToken } from "../utils/tokenManager.js";
+import { sendPasswordResetEmail } from "../services/sendGrid.js";
+import jwt from "jsonwebtoken";
 
 export const register = async (req, res) => {
   const { firstName, lastName, email, password, phoneNumber } = req.body;
   try {
-    const user = new User({
+    const leanUser = await createUserService({
       firstName,
       lastName,
       email,
@@ -13,14 +21,12 @@ export const register = async (req, res) => {
       degree: "",
       experience: "",
     });
-    await user.save();
-    console.log(user);
-    const leanUser = user.toObject();
-    const { token, expiresIn } = generateToken(user._id);
-    generateRefreshToken(user._id, res);
-    console.log("OK");
+    const { token, expiresIn } = await authenticateUserService(
+      leanUser._id,
+      res
+    );
     return res.status(201).json({
-      leanUser,
+      user: leanUser,
       jwt: {
         token,
         expiresIn,
@@ -28,40 +34,35 @@ export const register = async (req, res) => {
     });
   } catch (error) {
     if (error.code === 11000) {
-      console.log(error);
       return res.status(400).json({
         errors: [
           {
             value: email,
-            message: "Email already exists",
+            message: "Email ya registrado",
           },
         ],
       });
     }
     return res.status(500).json({
-      message: "Server error",
+      message: "Error del servidor",
     });
   }
 };
 
 export const login = async (req, res) => {
+  const { email, password } = req.body;
   try {
-    const { email, password } = req.body;
-    const user = await User.findOne({ email });
-
-    if (!user || !(await user.comparePassword(password))) {
+    const user = await findUserByEmailService(email);
+    if (!user || !(await comparePasswordService(user, password))) {
       return res.status(403).json({
         errors: [
           {
-            message: "Invalid credentials",
+            message: "Credenciales inválidas",
           },
         ],
       });
     }
-
-    const { token, expiresIn } = generateToken(user._id);
-    generateRefreshToken(user._id, res);
-
+    const { token, expiresIn } = await authenticateUserService(user._id, res);
     return res.json({
       user: {
         id: user._id,
@@ -69,8 +70,9 @@ export const login = async (req, res) => {
         lastName: user.lastName,
         email: user.email,
         phoneNumber: user.phoneNumber,
-        title: user.degree,
+        degree: user.degree,
         experience: user.experience,
+        profileImgUrl: user.profileImgUrl,
       },
       jwt: {
         token,
@@ -78,40 +80,55 @@ export const login = async (req, res) => {
       },
     });
   } catch (error) {
-    console.log(error);
     return res.status(500).json({
-      message: "Server error",
+      message: "Error del servidor",
     });
   }
 };
 
-export const refreshToken = async (req, res) => {
+export const requestPasswordReset = async (req, res) => {
+  const { email } = req.body;
+  console.log(email);
   try {
-    const { token, expiresIn } = generateToken(req.userId);
+    const user = await findUserByEmailService(email);
+    if (user) {
+      await sendPasswordResetEmail(user);
+    }
     return res.json({
-      jwt: {
-        token,
-        expiresIn,
-      },
+      message:
+        "Si una cuenta con este mail existe, se ha enviado un link para restablecer la contraseña.",
     });
   } catch (error) {
-    console.log(error);
     return res.status(500).json({
-      message: "Server error",
+      message: "Error del servidor",
     });
   }
 };
 
-export const logout = async (req, res) => {
+export const resetPassword = async (req, res) => {
+  const { token, password } = req.body;
   try {
-    res.clearCookie("refreshToken");
-    return res.json({
-      message: "Logged out",
-    });
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const userId = decoded.userId;
+    const user = await findUserByIdService(userId);
+    if (!user) {
+      return res.status(404).json({ message: "Usuario no encontrado" });
+    }
+    user.password = password;
+    await user.save();
+    return res.json({ message: "Contraseña restablecida exitosamente" });
   } catch (error) {
-    console.log(error);
-    return res.status(500).json({
-      message: "Server error",
-    });
+    if (error instanceof jwt.TokenExpiredError) {
+      return res.status(403).json({ message: "Token expirado" });
+    }
+    return res.status(500).json({ message: "Error del servidor" });
+  }
+};
+
+export const validateToken = async (req, res) => {
+  if (verifyToken(req.body.token).valid) {
+    return res.json({ valid: true });
+  } else {
+    return res.status(401).json({ valid: false });
   }
 };

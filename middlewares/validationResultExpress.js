@@ -11,84 +11,84 @@ export const validationResultExpress = (req, res, next) => {
 };
 
 export const registerBodyValidator = [
-  body("firstName", "First name is required").isAlpha(),
-  body("lastName", "Last name is required").isAlpha(),
-  body("email", "Please enter a valid email address")
+  body("firstName", "El nombre es requerido").isAlpha(),
+  body("lastName", "El apellido es requerido").isAlpha(),
+  body("email", "Por favor ingresá un correo electrónico válido")
     .trim()
     .isEmail()
     .normalizeEmail(),
-  body("password", "Password must be at least 8 characters long")
+  body("password", "La contraseña debe tener al menos 8 caracteres")
     .trim()
     .isLength({ min: 8 }),
-  body("phoneNumber", "Invalid phone number format").isNumeric(),
+  body("phoneNumber", "Formato de número de teléfono inválido.").isNumeric(),
   validationResultExpress,
 ];
 
 export const loginBodyValidator = [
-  body("email", "Please enter a valid email address")
+  body("email", "Por favor ingresá un correo electrónico válido")
     .trim()
     .isEmail()
     .normalizeEmail(),
-  body("password", "Password must be at least 8 characters long")
+  body("password", "La contraseña debe tener al menos 8 caracteres")
     .trim()
     .isLength({ min: 8 }),
   validationResultExpress,
 ];
 
 export const updateUserBodyValidator = [
-  body("degree", "Degree is required").trim().notEmpty(),
-  body("degree", "Degree cannot be more than 50 characters").isLength({
+  body("degree", "El título es requerido").trim().notEmpty(),
+  body("degree", "El título no puede tener más de 50 caracteres").isLength({
     max: 50,
   }),
-  body("experience", "Experience is required").trim().notEmpty(),
-  body("experience", "Experience cannot be more than 255 characters").isLength({
+  body("experience", "La experiencia").trim().notEmpty(),
+  body("experience", "La experiencia no puede tener más de 255 caracteres").isLength({
     max: 255,
   }),
   validationResultExpress,
 ];
 
 export const createServiceBodyValidator = [
-  body("name", "Name is required").trim().notEmpty(),
-  body("name", "Name cannot be more than 50 characters").isLength({ max: 50 }),
-  body("description", "Description is required").trim().notEmpty(),
+  body("name", "El nombre es requerido").trim().notEmpty(),
+  body("name", "El nombre no puede tener más de 50 caracteres").isLength({ max: 50 }),
+  body("description", "La descripción es requerida").trim().notEmpty(),
   body(
     "description",
-    "Description cannot be more than 255 characters"
+    "La descripción no puede tener más de 255 caracteres"
   ).isLength({ max: 255 }),
-  body("category", "Category is required").trim().notEmpty(),
-  body("category", "Invalid category").isIn([
+  body("category", "La categoría es requerida").trim().notEmpty(),
+  body("category", "Categoría inválida").isIn([
     "programacion",
     "idiomas",
     "musica",
     "matematica",
   ]),
-  body("frequency", "Frequency is required").trim().notEmpty(),
-  body("frequency", "Invalid frequency").isIn(["unique", "weekly", "monthly"]),
-  body("cost", "Cost is required").trim().notEmpty(),
-  body("cost", "Cost must be at least 0.99").isFloat({ min: 0.99 }),
-  body("type", "Type is required").trim().notEmpty(),
-  body("type", "Invalid type").isIn(["individual", "group"]),
-  body("duration", "Duration is required").trim().notEmpty(),
-  body("duration", "Invalid duration").isFloat({ min: 0.5, max: 4 }).toFloat(),
+  body("frequency", "La frecuencia es requerida.").trim().notEmpty(),
+  body("frequency", "Frecuencia inválida").isIn(["unique", "weekly", "monthly"]),
+  body("cost", "El costo es requerido").trim().notEmpty(),
+  body("cost", "El costo debe ser al menos de $0.99").isFloat({ min: 0.99 }),
+  body("type", "El tipo es requerido").trim().notEmpty(),
+  body("type", "Tipo inválido").isIn(["individual", "group"]),
+  body("duration", "La duración es requerida").trim().notEmpty(),
+  body("duration", "Duración inválida").isFloat({ min: 0.5, max: 4 }).toFloat(),
   validationResultExpress,
 ];
 
 export const createServiceContractBodyValidator = [
-  body("contactEmail", "Contact email is required").trim().notEmpty(),
-  body("contactEmail", "Invalid contact email").isEmail().normalizeEmail(),
-  body("message", "Message is required").trim().notEmpty(),
-  body("message", "Message cannot be more than 255 characters").isLength({
+  body("contactEmail", "El email de contacto es requerido").trim().notEmpty(),
+  body("contactEmail", "Mail de contacto inválido").isEmail().normalizeEmail(),
+  body("message", "El mensaje es requerido").trim().notEmpty(),
+  body("message", "El mensaje no puede tener más de 255 caracteres").isLength({
     max: 255,
   }),
-  body("phoneNumber", "Phone number is required").trim().notEmpty(),
-  body("preferredContactTime", "Preferred contact time is required")
+  body("phoneNumber", "El número de teléfono es requerido").trim().notEmpty(),
+  body("preferredContactTime", "El horario de preferencia de contacto es requerido")
     .trim()
     .notEmpty(),
   validationResultExpress,
 ];
 
 export const updateServiceContractBodyValidator = [
-  body("contractStatus", "Invalid contract status").isIn([
+  body("contractStatus", "Estado de contratación inválido").isIn([
     "requested",
     "completed",
     "accepted",
@@ -98,14 +98,10 @@ export const updateServiceContractBodyValidator = [
 ];
 
 export const createCommentBodyValidator = [
-  body("content", "Content is required").trim().notEmpty(),
-  body("content", "Content must be at least 5 characters").isLength({
-    min: 5,
-  }),
-  body("content", "Content cannot be more than 255 characters").isLength({
+  body("content", "El contenido no puede tener más de 255 caracteres").isLength({
     max: 255,
   }),
-  body("rating", "Rating is required").trim().notEmpty(),
-  body("rating", "Invalid rating").isInt({ min: 1, max: 5 }),
+  body("rating", "La calificación es requerida").trim().notEmpty(),
+  body("rating", "Calificación inválida").isInt({ min: 1, max: 5 }),
   validationResultExpress,
 ];

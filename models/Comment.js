@@ -8,10 +8,8 @@ const commentSchema = new mongoose.Schema({
   },
   content: {
     type: String,
-    required: true,
     trim: true,
-    minlength: [5, "Content should be at least 5 characters"],
-    maxlength: [255, "Content should not exceed 255 characters"],
+    maxlength: [255, "El contenido no puede exceder los 255 caracteres"],
   },
   rating: {
     type: Number,
