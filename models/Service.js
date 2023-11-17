@@ -10,14 +10,14 @@ const serviceSchema = new mongoose.Schema({
   },
   name: {
     type: String,
-    maxLength: [50, "Name cannot be more than 50 characters"],
+    maxLength: [50, "El nombre no puede exceder los 50 caracteres"],
     trim: true,
     required: true,
   },
   description: {
     type: String,
     trim: true,
-    maxLength: [255, "Description cannot be more than 255 characters"],
+    maxLength: [255, "La descripción no puede exceder los 255 caracteres"],
     required: true,
   },
   category: {
@@ -32,7 +32,7 @@ const serviceSchema = new mongoose.Schema({
   },
   cost: {
     type: Number,
-    min: [0.99, "Cost must be at least 0.99"],
+    min: [0.99, "El costo mínimo es de $0.99 "],
     required: true,
   },
   type: {
@@ -43,8 +43,8 @@ const serviceSchema = new mongoose.Schema({
   duration: {
     type: Number,
     required: true,
-    min: [0.5, "The minimum duration must be at least 0.5 hours."],
-    max: [4, "The maximum duration must be 4 hours."],
+    min: [0.5, "La duración mínima es de 30 minutos"],
+    max: [4, "La duración máxima es de 4 horas"],
   },
   isPublished: {
     type: Boolean,

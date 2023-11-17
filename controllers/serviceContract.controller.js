@@ -5,7 +5,7 @@ export const getContractsByServiceId = async (req, res) => {
   try {
     const service = await ServiceContractService.findServiceById(req.params.serviceId);
     if (!service) {
-      return res.status(404).json({ message: "Service not found" });
+      return res.status(404).json({ message: "Servicio no encontrado" });
     }
     const contracts = await ServiceContractService.findContractsByServiceId(req.params.serviceId);
     return res.json({ contracts });
@@ -28,7 +28,7 @@ export const createContract = async (req, res) => {
   try {
     const service = await ServiceContractService.findServiceById(req.params.serviceId);
     if (!service) {
-      return res.status(404).json({ message: "Service not found" });
+      return res.status(404).json({ message: "Servicio no encontrado" });
     }
     const contract = await ServiceContractService.createNewContract({
       ...req.body,
@@ -45,11 +45,11 @@ export const updateContract = async (req, res) => {
   try {
     const contract = await ServiceContractService.findContractByIdAndUpdate(req.params.id, { contractStatus: req.body.contractStatus });
     if (!contract) {
-      return res.status(404).json({ message: "Contract not found" });
+      return res.status(404).json({ message: "Contratación no encontrada" });
     }
     const service = await ServiceContractService.findServiceById(contract.serviceId);
     if (!service || service.userId.toString() !== req.userId) {
-      return res.status(403).json({ message: "Unauthorized to update this contract" });
+      return res.status(403).json({ message: "No autorizado para actualizar esta contratación" });
     }
     return res.json({ contract });
   } catch (error) {

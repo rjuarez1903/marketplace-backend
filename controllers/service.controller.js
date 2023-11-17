@@ -8,7 +8,7 @@ export const getAllServices = async (req, res) => {
   try {
     const category = req.query.category || "all";
     if (!ServiceService.validateCategory(category)) {
-      return res.status(400).json({ message: "Invalid category." });
+      return res.status(400).json({ message: "Categoría inválida" });
     }
     const services = await ServiceService.findAllServices(category);
     return res.json({ services });
@@ -48,7 +48,7 @@ export const getServiceById = async (req, res) => {
   try {
     const service = await ServiceService.findServiceById(req.params.id);
     if (!service) {
-      return res.status(404).json({ message: "Service not found" });
+      return res.status(404).json({ message: "Servicio no encontrado" });
     }
     return res.json({ service });
   } catch (error) {
@@ -69,7 +69,7 @@ export const updateService = async (req, res) => {
   ];
   const updates = Object.keys(req.body);
   if (!validateAllowedUpdates(allowedUpdates, updates)) {
-    return res.status(400).json({ message: "Invalid update" });
+    return res.status(400).json({ message: "Actualización inválida" });
   }
   try {
     const service = await ServiceService.updateExistingService(

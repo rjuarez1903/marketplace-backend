@@ -5,12 +5,12 @@ export const getUser = async (req, res) => {
   try {
     const user = await findUserById(req.userId);
     if (!user) {
-      return res.status(404).json({ message: "User not found" });
+      return res.status(404).json({ message: "Usuario no encontrado" });
     }
     return res.json({ user });
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ message: "Server error" });
+    return res.status(500).json({ message: "Error del servidor" });
   }
 };
 
@@ -18,13 +18,13 @@ export const getPublicUserData = async (req, res) => {
   try {
     const user = await findUserById(req.params.id);
     if (!user) {
-      return res.status(404).json({ message: "User not found" });
+      return res.status(404).json({ message: "Usuario no encontrado" });
     }
     const publicData = getPublicProfile(user);
     return res.json(publicData);
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ message: "Server error" });
+    return res.status(500).json({ message: "Error del servidor" });
   }
 }
 
@@ -35,7 +35,7 @@ export const updateUser = async (req, res) => {
     return res.json({ leanUser });
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ message: "Server error" });
+    return res.status(500).json({ message: "Error del servidor" });
   }
 };
 
@@ -47,6 +47,6 @@ export const updateUserProfileImage = async (req, res) => {
     return res.json({ user: updatedUser });
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ message: "Server error" });
+    return res.status(500).json({ message: "Error del servidor" });
   }
 };

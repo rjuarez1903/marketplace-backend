@@ -3,11 +3,11 @@ import { Service } from "../models/Service.js";
 export const findServiceAndCheckOwnership = async (serviceId, userId) => {
   const service = await Service.findById(serviceId);
   if (!service) {
-    throw new Error("Service not found");
+    throw new Error("Servicio no encontrado");
   }
 
   if (service.userId.toString() !== userId) {
-    throw new Error("Service does not belong to user");
+    throw new Error("El servicio no pertenece al usuario");
   }
 
   return service;

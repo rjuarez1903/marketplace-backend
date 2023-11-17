@@ -11,7 +11,7 @@ export const upload = async (imageBuffer) => {
     cloudinary.uploader
       .upload_stream((error, result) => {
         if (error) {
-          console.error("Error uploading to Cloudinary:", error);
+          console.error("Error al subir a Cloudinary:", error);
           reject(error.message);
         }
         resolve(result.secure_url);

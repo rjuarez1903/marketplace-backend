@@ -4,9 +4,8 @@ import {
   findUserByIdService,
   findUserByEmailService,
   comparePasswordService,
-  clearRefreshTokenService,
 } from "../services/auth.service.js";
-import { generateToken, verifyToken } from "../utils/tokenManager.js";
+import { verifyToken } from "../utils/tokenManager.js";
 import { sendPasswordResetEmail } from "../services/sendGrid.js";
 import jwt from "jsonwebtoken";
 
@@ -39,13 +38,13 @@ export const register = async (req, res) => {
         errors: [
           {
             value: email,
-            message: "Email already exists",
+            message: "Email ya registrado",
           },
         ],
       });
     }
     return res.status(500).json({
-      message: "Server error",
+      message: "Error del servidor",
     });
   }
 };
@@ -58,7 +57,7 @@ export const login = async (req, res) => {
       return res.status(403).json({
         errors: [
           {
-            message: "Invalid credentials",
+            message: "Credenciales inválidas",
           },
         ],
       });
@@ -82,36 +81,7 @@ export const login = async (req, res) => {
     });
   } catch (error) {
     return res.status(500).json({
-      message: "Server error",
-    });
-  }
-};
-
-export const refreshToken = async (req, res) => {
-  try {
-    const { token, expiresIn } = generateToken(req.userId);
-    return res.json({
-      jwt: {
-        token,
-        expiresIn,
-      },
-    });
-  } catch (error) {
-    return res.status(500).json({
-      message: "Server error",
-    });
-  }
-};
-
-export const logout = async (req, res) => {
-  try {
-    clearRefreshTokenService(res);
-    return res.json({
-      message: "Logged out",
-    });
-  } catch (error) {
-    return res.status(500).json({
-      message: "Server error",
+      message: "Error del servidor",
     });
   }
 };
@@ -126,11 +96,11 @@ export const requestPasswordReset = async (req, res) => {
     }
     return res.json({
       message:
-        "If an account with this email exists, a password reset link has been sent.",
+        "Si una cuenta con este mail existe, se ha enviado un link para restablecer la contraseña.",
     });
   } catch (error) {
     return res.status(500).json({
-      message: "Server error",
+      message: "Error del servidor",
     });
   }
 };
@@ -142,16 +112,16 @@ export const resetPassword = async (req, res) => {
     const userId = decoded.userId;
     const user = await findUserByIdService(userId);
     if (!user) {
-      return res.status(404).json({ message: "User not found" });
+      return res.status(404).json({ message: "Usuario no encontrado" });
     }
     user.password = password;
     await user.save();
-    return res.json({ message: "Password reset successfully" });
+    return res.json({ message: "Contraseña restablecida exitosamente" });
   } catch (error) {
     if (error instanceof jwt.TokenExpiredError) {
-      return res.status(403).json({ message: "Token expired" });
+      return res.status(403).json({ message: "Token expirado" });
     }
-    return res.status(500).json({ message: "Server error" });
+    return res.status(500).json({ message: "Error del servidor" });
   }
 };
 
@@ -161,4 +131,4 @@ export const validateToken = async (req, res) => {
   } else {
     return res.status(401).json({ valid: false });
   }
-}
+};

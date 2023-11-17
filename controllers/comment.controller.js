@@ -5,7 +5,7 @@ export const getCommentsByServiceId = async (req, res) => {
   try {
     const service = await CommentService.findServiceById(req.params.serviceId);
     if (!service) {
-      return res.status(404).json({ message: "Service not found" });
+      return res.status(404).json({ message: "Servicio no encontrado" });
     }
 
     let comments = await CommentService.findCommentsByServiceId(
@@ -29,12 +29,12 @@ export const getAllCommentsByServiceId = async (req, res) => {
   try {
     const service = await CommentService.findServiceById(req.params.serviceId);
     if (!service) {
-      return res.status(404).json({ message: "Service not found" });
+      return res.status(404).json({ message: "Servicio no encontrado" });
     }
     if (!CommentService.checkUserAuthorization(service.userId, req.userId)) {
       return res
         .status(403)
-        .json({ message: "Unauthorized to view all comments" });
+        .json({ message: "No autorizado para ver todos los comentarios" });
     }
     const comments = await CommentService.findCommentsByServiceId(
       req.params.serviceId
@@ -63,13 +63,13 @@ export const updateComment = async (req, res) => {
   try {
     const comment = await CommentService.findCommentById(req.params.commentId);
     if (!comment) {
-      return res.status(404).json({ message: "Comment not found" });
+      return res.status(404).json({ message: "Comentario no encontrado" });
     }
     const service = await CommentService.findServiceById(comment.serviceId);
     if (!CommentService.checkUserAuthorization(service.userId, req.userId)) {
       return res
         .status(403)
-        .json({ message: "Unauthorized to update this comment" });
+        .json({ message: "No autorizado para actualizar este comentario" });
     }
     const updatedComment = await CommentService.updateCommentById(
       req.params.commentId,

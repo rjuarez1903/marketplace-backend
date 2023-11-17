@@ -2,8 +2,6 @@ import { Router } from "express";
 import {
   login,
   register,
-  refreshToken,
-  logout,
   requestPasswordReset,
   validateToken,
   resetPassword,
@@ -12,7 +10,6 @@ import {
   loginBodyValidator,
   registerBodyValidator,
 } from "../middlewares/validationResultExpress.js";
-import { requireRefreshToken } from "../middlewares/requireRefreshToken.js";
 
 const router = Router();
 
@@ -21,7 +18,5 @@ router.post("/login", loginBodyValidator, login);
 router.post("/requestPasswordReset", requestPasswordReset);
 router.post("/resetPassword", resetPassword);
 router.post("/validateToken", validateToken);
-router.get("/refresh", requireRefreshToken, refreshToken);
-router.get("/logout", logout);
 
 export default router;

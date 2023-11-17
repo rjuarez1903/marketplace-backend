@@ -7,7 +7,7 @@ export const uploadImage = async (req, res) => {
     return res.json({ imageUrl });
   } catch (error) {
     return res.status(500).json({
-      message: "Server error",
+      message: "Error del servidor",
     });
   }
 };
@@ -16,10 +16,10 @@ export const send = async (req, res) => {
   try {
     const { email, subject, text, html } = req.body;
     await sendMail(email, subject, text, html);
-    return res.json({ message: "Email sent" });
+    return res.json({ message: "Email enviado" });
   } catch (error) {
     return res.status(500).json({
-      message: "Server error",
+      message: "Error del servidor",
     });
   }
 };

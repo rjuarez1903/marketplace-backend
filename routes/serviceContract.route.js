@@ -13,11 +13,6 @@ import {
 
 const router = Router();
 
-// GET      /api/v1/serviceContracts/:serviceId     all contracts of a service
-// GET      /api/v1/serviceContracts/:userId        all contracts of a user
-// POST     /api/v1/serviceContracts/:serviceId     create contract
-// PATCH    /api/v1/serviceContracts/:id            update contract
-
 router.get("/user", requireToken, getContractsByUser);
 router.get("/:serviceId", getContractsByServiceId);
 router.post("/:serviceId", createServiceContractBodyValidator, createContract);

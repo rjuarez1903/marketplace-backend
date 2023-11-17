@@ -1,6 +1,6 @@
-# Marketplace de Servicios Particulares - README
+# EduHub - README
 
-Esta es una plataforma de servicios en línea que permite a los usuarios ofrecer y buscar servicios. Los usuarios que ofrecen sus servicios pueden registrarse, autenticarse y gestionar servicios y contratos.
+EduHub es una plataforma de servicios en línea que permite a los usuarios ofrecer y buscar servicios. Los usuarios que ofrecen sus servicios pueden registrarse, autenticarse y gestionar servicios y contrataciones.
 
 ## Funcionalidades Básicas
 
@@ -10,7 +10,7 @@ Esta es una plataforma de servicios en línea que permite a los usuarios ofrecer
 
 - **Servicios:** Los usuarios autenticados pueden crear, actualizar y eliminar servicios. Los servicios tienen atributos tales como nombre, descripción, categoría, costo, tipo, etc. 
 
-- **Contratos de Servicio:** Los usuarios pueden crear, actualizar y listar contratos de servicio para servicios específicos. Los contratos incluyen información de contacto de quien desea contratar el servicio y el estado del mismo.
+- **Contratos de Servicio:** Los usuarios pueden crear, actualizar y listar contrataciones de servicio para servicios específicos. Los contratos incluyen información de contacto de quien desea contratar el servicio y el estado del mismo.
 Los usuarios autenticados son quienes pueden transicionar dicho estado.
 
 - **Comentarios:** Los usuarios pueden ver y crear comentarios en servicios específicos. 
@@ -29,28 +29,29 @@ Los usuarios autenticados son quienes pueden transicionar dicho estado.
 
 - **Modelos y Esquemas:** Se definen modelos y esquemas de Mongoose para usuarios, servicios, contratos de servicio y comentarios.
 
-- **Rutas y Controladores:** Las rutas están organizadas en diferentes archivos y corresponden a las funcionalidades específicas del sistema.
-
-- **Cookies y Seguridad:** Se utilizan cookies para almacenar tokens de actualización. Las cookies son seguras y httpOnly.
+- **Rutas, Controladores y Servicios:** Las rutas están organizadas en diferentes archivos y corresponden a las funcionalidades específicas del sistema.
 
 - **Configuración del Entorno:** Se utiliza un archivo `.env` para almacenar variables de entorno, como claves secretas y configuraciones de la base de datos.
 
-- **Documentación:** El código incluye comentarios explicativos y documentación de las rutas, controladores y middlewares.
-
 ## Variables de Entorno
 
-- `URI_MONGO`: Debe contener la URI de conexión a tu base de datos MongoDB. Por ejemplo: `mongodb://localhost:27017/mi_base_de_datos`.
+Además de las variables de entorno previamente mencionadas, asegúrate de configurar las siguientes:
 
-- `JWT_SECRET`: Es la clave secreta utilizada para firmar los tokens JWT de autenticación. Debe ser una cadena segura y única.
+- `CLOUDINARY_CLOUD_NAME`: Nombre de tu cuenta en Cloudinary, utilizado para almacenar imágenes.
+- `CLOUDINARY_API_KEY`: Clave API de Cloudinary para autenticar tus solicitudes.
+- `CLOUDINARY_API_SECRET`: Clave API Secret de Cloudinary para garantizar la seguridad en tus solicitudes.
+- `SENDGRID_API_KEY`: Clave API de SendGrid utilizada para enviar correos electrónicos.
+- `USER_EMAIL`: Dirección de correo electrónico utilizada como remitente en los correos electrónicos enviados a través de SendGrid.
+- `URI_MONGO`: URI de conexión a tu base de datos MongoDB. Asegurate de incluir tus credenciales y el nombre de la base de datos.
+- `JWT_SECRET`: Clave secreta utilizada para firmar los tokens JWT de autenticación.
+- `MODE`: Modo de ejecución de la aplicación, puede ser `"dev"` o `"production"`.
+- `ORIGIN1`: URL del origen permitido para las solicitudes CORS, útil en desarrollo para permitir solicitudes desde tu frontend local.
 
-- `JWT_REFRESH`: Es la clave secreta utilizada para firmar los tokens JWT de actualización. También debe ser una cadena segura y única.
-
-- `MODE`: Puede ser un valor como `"dev"` o `"production"` y se utiliza para configurar la seguridad de las cookies. Si es `"dev"`, las cookies pueden ser enviadas a través de conexiones no seguras (HTTP) para facilitar el desarrollo local. Si es `"production"`, las cookies solo se van a enviar a través de conexiones seguras (HTTPS).
-
+Recuerda que estas variables deben mantenerse seguras y no deben ser compartidas públicamente.
 
 ## Instalación y Ejecución
 
 1. Cloná este repositorio: `git clone <URL_DEL_REPOSITORIO>`
 2. Instalá las dependencias: `npm install`
 3. Creá un archivo `.env` con las variables de entorno necesarias.
-4. Ejecutá la aplicación: `npm start`
+4. Ejecutá la aplicación: `npm run dev`
