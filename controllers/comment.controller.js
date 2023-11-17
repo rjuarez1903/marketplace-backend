@@ -1,4 +1,4 @@
-import * as CommentService from '../services/comment.service.js';
+import * as CommentService from "../services/comment.service.js";
 import { handleErrorResponse } from "../utils/handleErrorResponse.js";
 
 export const getCommentsByServiceId = async (req, res) => {
@@ -7,9 +7,19 @@ export const getCommentsByServiceId = async (req, res) => {
     if (!service) {
       return res.status(404).json({ message: "Service not found" });
     }
-    let comments = await CommentService.findCommentsByServiceId(req.params.serviceId);
-    // comments = comments.filter((comment) => !comment.isBlocked);
-    return res.json({ comments });
+
+    let comments = await CommentService.findCommentsByServiceId(
+      req.params.serviceId
+    );
+    const modifiedComments = comments.map((comment) => {
+      if (comment.isBlocked) {
+        const { content, ...rest } = comment; 
+        return rest;
+      }
+      return comment; 
+    });
+
+    return res.json({ comments: modifiedComments });
   } catch (error) {
     return handleErrorResponse(res, error);
   }
@@ -22,9 +32,13 @@ export const getAllCommentsByServiceId = async (req, res) => {
       return res.status(404).json({ message: "Service not found" });
     }
     if (!CommentService.checkUserAuthorization(service.userId, req.userId)) {
-      return res.status(403).json({ message: "Unauthorized to view all comments" });
+      return res
+        .status(403)
+        .json({ message: "Unauthorized to view all comments" });
     }
-    const comments = await CommentService.findCommentsByServiceId(req.params.serviceId);
+    const comments = await CommentService.findCommentsByServiceId(
+      req.params.serviceId
+    );
     return res.json({ comments });
   } catch (error) {
     return handleErrorResponse(res, error);
@@ -34,7 +48,11 @@ export const getAllCommentsByServiceId = async (req, res) => {
 export const createComment = async (req, res) => {
   try {
     const { content, rating } = req.body;
-    const comment = await CommentService.createNewComment(req.params.serviceId, content, rating);
+    const comment = await CommentService.createNewComment(
+      req.params.serviceId,
+      content,
+      rating
+    );
     return res.json({ comment });
   } catch (error) {
     return handleErrorResponse(res, error);
@@ -49,9 +67,14 @@ export const updateComment = async (req, res) => {
     }
     const service = await CommentService.findServiceById(comment.serviceId);
     if (!CommentService.checkUserAuthorization(service.userId, req.userId)) {
-      return res.status(403).json({ message: "Unauthorized to update this comment" });
+      return res
+        .status(403)
+        .json({ message: "Unauthorized to update this comment" });
     }
-    const updatedComment = await CommentService.updateCommentById(req.params.commentId, req.body.isBlocked);
+    const updatedComment = await CommentService.updateCommentById(
+      req.params.commentId,
+      req.body.isBlocked
+    );
     return res.json({ updatedComment });
   } catch (error) {
     return handleErrorResponse(res, error);
