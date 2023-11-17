@@ -47,11 +47,11 @@ Además de las variables de entorno previamente mencionadas, asegúrate de confi
 - `MODE`: Modo de ejecución de la aplicación, puede ser `"dev"` o `"production"`.
 - `ORIGIN1`: URL del origen permitido para las solicitudes CORS, útil en desarrollo para permitir solicitudes desde tu frontend local.
 
-Recuerda que estas variables deben mantenerse seguras y no deben ser compartidas públicamente.
+Recordá que estas variables deben mantenerse seguras y no deben ser compartidas públicamente.
 
 ## Instalación y Ejecución
 
-1. Cloná este repositorio: `git clone <URL_DEL_REPOSITORIO>`
+1. Cloná este repositorio: `git clone https://github.com/rjuarez1903/marketplace-backend`
 2. Instalá las dependencias: `npm install`
 3. Creá un archivo `.env` con las variables de entorno necesarias.
 4. Ejecutá la aplicación: `npm run dev`
